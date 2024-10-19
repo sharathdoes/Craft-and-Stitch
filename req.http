@@ -1,12 +1,9 @@
 ### Register a new user
-POST http://localhost:5000/user/reg/
+POST http://localhost:5000/auth/
 Content-Type: application/json
 
 {
-  "username": "testuser",
   "email": "testuser@example.com",
   "password": "Password123",
-  "phone": "1234567890",
-  "address": "123 Test St, Test City",
-  "role": "user"
+  "requiredRole": "user"
 }

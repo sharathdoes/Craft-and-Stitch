@@ -5,7 +5,8 @@ const userController = require('../controllers/user');
 const router = express.Router();
 
 const isAuth = require('../middlewares/isAuth');
-
+const checkDesigner= require('../middlewares/isProducer');
+const checkProducer= require('../middlewares/isDesigner.js');
 // @route   POST /user
 // @desc    Register user
 // @access  public
@@ -30,11 +31,11 @@ router.get('/:id', isAuth, userController.getUserById);
 // @route   GET /user/purchased
 // @desc    Get products purchased by user
 // @access  protected
-router.get('/products/purchased', isAuth, userController.purchasedProducts);
+router.get('/products/purchased',checkProducer, isAuth, userController.purchasedProducts);
 
 // @route   GET /user/posted
 // @desc    Get product ads posted by user
 // @access  protected
-router.get('/products/posted', isAuth, userController.postedProducts);
+router.get('/products/posted',checkDesigner, isAuth, userController.postedProducts);
 
 module.exports = router;

@@ -5,13 +5,14 @@ const adController = require('../controllers/ad');
 const router = express.Router();
 
 const isAuth = require('../middlewares/isAuth');
+const checkDesigner = require('../middlewares/isDesigner.js'); // Import checkDesigner
 
 // @route   POST /ad
 // @desc    Post a new ad
 // @access  protected
 router.post(
   '/',
-  isAuth,
+  isAuth,checkDesigner,
   [
     body('productName', 'Invalid productName').trim().not().isEmpty(),
     body('basePrice', 'Invalid basePrice').trim().isNumeric(),
@@ -32,12 +33,12 @@ router.get('/:id', isAuth, adController.findAd);
 
 // @route   PUT /ad/:id
 // @desc    Update an ad
-// @access  protected
-router.put('/:id', isAuth, adController.updateAd);
+// @access  protected and must be designer
+router.put('/:id', isAuth, checkDesigner, adController.updateAd); // Added checkDesigner
 
 // @route   DELETE /ad/:id
 // @desc    Delete an ad
-// @access  protected
-router.delete('/:id', isAuth, adController.deleteAd);
+// @access  protected and must be designer
+router.delete('/:id', isAuth, checkDesigner, adController.deleteAd); // Added checkDesigner
 
 module.exports = router;
