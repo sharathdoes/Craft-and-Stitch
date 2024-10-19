@@ -10,13 +10,14 @@ const isAuth = require('../middlewares/isAuth');
 // @desc    Register user
 // @access  public
 router.post(
-  '/',
+  '/reg',
   [
     body('username', 'Invalid name').trim().not().isEmpty(),
     body('email', 'Invalid email').trim().isEmail(),
     body('password', 'Enter valid password with min length of 6 char')
       .trim()
       .isLength({ min: 6 }),
+      body('role', 'Role is required').trim().not().isEmpty(),
   ],
   userController.registerUser
 );

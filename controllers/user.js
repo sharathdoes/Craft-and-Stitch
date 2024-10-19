@@ -14,7 +14,7 @@ exports.registerUser = async (req, res, next) => {
     }
 
     // Check for existing user
-    const { username, email, password, phone, address } = req.body;
+    const { username, email, password, phone, address, role } = req.body;
     let user = await User.findOne({ email: email });
     if (user) {
       return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
@@ -24,11 +24,12 @@ exports.registerUser = async (req, res, next) => {
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
     user = new User({
-      username: username,
+      username,
       email,
       password: hashedPassword,
       phone,
       address,
+      role,  // Include the role field here
     });
 
     // Save user
@@ -40,6 +41,7 @@ exports.registerUser = async (req, res, next) => {
         id: user._id,
         email,
         username,
+        role,  // Include the role in the token payload
       },
     };
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
@@ -50,9 +52,10 @@ exports.registerUser = async (req, res, next) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ errors: [{ msg: 'User already exists' }] });
+    res.status(500).json({ errors: [{ msg: err.message }] }); // Return the actual error message
   }
 };
+
 
 exports.getUserById = async (req, res) => {
   const id = req.params.id;
@@ -65,7 +68,7 @@ exports.getUserById = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ errors: [{ msg: 'User already exists' }] });
+    res.status(500).json({ errors: [{ msg: 'Server error' }] }); // Change error message
   }
 };
 
@@ -77,7 +80,7 @@ exports.purchasedProducts = async (req, res) => {
     res.status(200).json(fetchedUser.purchasedProducts);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ errors: [{ msg: 'Server error' }] });
+    res.status(500).json({ errors: [{ msg: 'Server error' }] }); // Change error message
   }
 };
 
@@ -89,6 +92,6 @@ exports.postedProducts = async (req, res) => {
     res.status(200).json(fetchedUser.postedAds);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ errors: [{ msg: 'Server error' }] });
+    res.status(500).json({ errors: [{ msg: 'Server error' }] }); // Change error message
   }
 };

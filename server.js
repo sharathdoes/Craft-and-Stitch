@@ -2,16 +2,12 @@ const express = require('express');
 require('dotenv').config();
 const connectDb = require('./db/dbconnect');
 const { createServer } = require('http');
-const multer = require('multer');
 const socketio = require('./socket');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDoc = require('./documentation/swaggerSetup');
 
 const app = express();
 const server = createServer(app);
 const io = socketio.init(server);
 const adIo = socketio.initAdIo(server, '/socket/adpage');
-const upload = multer({ dest: 'uploads/' });
 
 // Body parser
 app.use(express.json());
@@ -24,8 +20,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Documentation setup
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 // Default route
 app.get('/', (req, res, next) => {
@@ -39,7 +33,12 @@ app.use('/ad', require('./routes/ad'));
 app.use('/bid', require('./routes/bid'));
 app.use('/room', require('./routes/room'));
 app.use('/auction', require('./routes/auction'));
-app.use('/upload', require('./routes/uploads'));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
 
 // Socket.io setup
 const PORT = process.env.PORT || 5000;

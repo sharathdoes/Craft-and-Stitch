@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema({
       ref: 'ad',
     },
   ],
+  role: {
+    type: String,
+    required: true,  // Adding the role field as required
+  },
 });
 
 module.exports = mongoose.model('user', userSchema);
